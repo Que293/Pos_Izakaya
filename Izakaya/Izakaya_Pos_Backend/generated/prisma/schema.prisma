@@ -1,0 +1,286 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+// ระบบผู้ใช้งานและสิทธิ์
+enum UserRole {
+  OWNER
+  MANAGER
+  STAFF
+}
+
+model User {
+  id          String   @id @default(uuid())
+  username    String   @unique
+  password    String // Hashed password
+  pin         String // Hashed PIN for tablet login
+  role        UserRole
+  fullName    String
+  email       String?
+  phoneNumber String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  active      Boolean  @default(true)
+
+  // Relations
+  orders   Order[]
+  payments Payment[]
+}
+
+// ระบบจัดการโต๊ะและที่นั่ง
+enum TableStatus {
+  AVAILABLE
+  RESERVED
+  OCCUPIED
+}
+
+model Table {
+  id          String      @id @default(uuid())
+  tableNumber String      @unique
+  capacity    Int
+  status      TableStatus @default(AVAILABLE)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  active      Boolean     @default(true)
+
+  // Relations
+  seats        Seat[]
+  reservations Reservation[]
+}
+
+model Seat {
+  id         String      @id @default(uuid())
+  seatNumber String
+  status     TableStatus @default(AVAILABLE)
+
+  // Relations
+  tableId String
+  table   Table   @relation(fields: [tableId], references: [id], onDelete: Cascade)
+  orders  Order[]
+
+  @@unique([tableId, seatNumber])
+}
+
+model Reservation {
+  id              String   @id @default(uuid())
+  customerName    String
+  phoneNumber     String
+  partySize       Int
+  reservationTime DateTime
+  notes           String?
+  status          String // "confirmed", "cancelled", "completed"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  tableId String
+  table   Table  @relation(fields: [tableId], references: [id])
+}
+
+// ระบบจัดการ Course อาหาร
+model Course {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  courseItems CourseItem[]
+  orders      Order[]
+}
+
+model CourseItem {
+  id       String @id @default(uuid())
+  quantity Int
+
+  // Relations
+  courseId   String
+  course     Course   @relation(fields: [courseId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+
+  @@unique([courseId, menuItemId])
+}
+
+// ระบบจัดการเมนูอาหาร
+model MenuCategory {
+  id           String  @id @default(uuid())
+  name         String
+  description  String?
+  displayOrder Int
+  active       Boolean @default(true)
+
+  // Relations
+  menuItems MenuItem[]
+}
+
+model MenuItem {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  imageUrl    String?
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  categoryId  String
+  category    MenuCategory         @relation(fields: [categoryId], references: [id])
+  courseItems CourseItem[]
+  orderItems  OrderItem[]
+  ingredients MenuItemIngredient[]
+}
+
+// ระบบสั่งอาหาร
+enum OrderStatus {
+  PENDING
+  PREPARING
+  SERVED
+  COMPLETED
+  CANCELLED
+}
+
+model Order {
+  id          String      @id @default(uuid())
+  orderNumber String      @unique
+  status      OrderStatus @default(PENDING)
+  notes       String?
+  hasCourse   Boolean     @default(false)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  userId     String
+  user       User        @relation(fields: [userId], references: [id])
+  seatId     String
+  seat       Seat        @relation(fields: [seatId], references: [id])
+  courseId   String?
+  course     Course?     @relation(fields: [courseId], references: [id])
+  orderItems OrderItem[]
+  payment    Payment?
+}
+
+model OrderItem {
+  id        String      @id @default(uuid())
+  quantity  Int
+  price     Decimal     @db.Decimal(10, 2)
+  notes     String?
+  status    OrderStatus @default(PENDING)
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  // Relations
+  orderId    String
+  order      Order    @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  menuItemId String
+  menuItem   MenuItem @relation(fields: [menuItemId], references: [id])
+}
+
+// ระบบชำระเงิน
+enum PaymentMethod {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  QR_CODE
+  MOBILE_BANKING
+}
+
+enum PaymentStatus {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
+}
+
+model Payment {
+  id             String        @id @default(uuid())
+  receiptNumber  String        @unique
+  amount         Decimal       @db.Decimal(10, 2)
+  method         PaymentMethod
+  status         PaymentStatus @default(PENDING)
+  transactionRef String? // Reference for electronic payments
+  notes          String?
+  createdAt      DateTime      @default(now())
+  updatedAt      DateTime      @updatedAt
+
+  // Relations
+  orderId String @unique
+  order   Order  @relation(fields: [orderId], references: [id])
+  userId  String
+  user    User   @relation(fields: [userId], references: [id])
+}
+
+// ระบบจัดการสต็อก
+model InventoryCategory {
+  id          String  @id @default(uuid())
+  name        String
+  description String?
+
+  // Relations
+  inventoryItems InventoryItem[]
+}
+
+model InventoryItem {
+  id              String   @id @default(uuid())
+  name            String
+  description     String?
+  unit            String // e.g., kg, liter, piece
+  quantityInStock Decimal  @db.Decimal(10, 2)
+  alertThreshold  Decimal  @db.Decimal(10, 2)
+  costPerUnit     Decimal  @db.Decimal(10, 2)
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  // Relations
+  categoryId            String
+  category              InventoryCategory      @relation(fields: [categoryId], references: [id])
+  inventory             MenuItemIngredient[]
+  inventoryTransactions InventoryTransaction[]
+}
+
+model MenuItemIngredient {
+  id               String  @id @default(uuid())
+  quantityRequired Decimal @db.Decimal(10, 2)
+
+  // Relations
+  menuItemId      String
+  menuItem        MenuItem      @relation(fields: [menuItemId], references: [id], onDelete: Cascade)
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+
+  @@unique([menuItemId, inventoryItemId])
+}
+
+enum TransactionType {
+  STOCK_IN
+  STOCK_OUT
+  ADJUSTMENT
+}
+
+model InventoryTransaction {
+  id        String          @id @default(uuid())
+  type      TransactionType
+  quantity  Decimal         @db.Decimal(10, 2)
+  notes     String?
+  createdAt DateTime        @default(now())
+
+  // Relations
+  inventoryItemId String
+  inventoryItem   InventoryItem @relation(fields: [inventoryItemId], references: [id])
+}

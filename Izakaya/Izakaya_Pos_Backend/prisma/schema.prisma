@@ -1,0 +1,275 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model course {
+  id          String       @id
+  name        String
+  description String?
+  price       Decimal      @db.Decimal(10, 2)
+  isActive    Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  courseitem  courseitem[]
+  order       order[]
+}
+
+model courseitem {
+  id         String   @id
+  quantity   Int
+  courseId   String
+  menuItemId String
+  course     course   @relation(fields: [courseId], references: [id], onDelete: Cascade, map: "CourseItem_courseId_fkey")
+  menuitem   menuitem @relation(fields: [menuItemId], references: [id], map: "CourseItem_menuItemId_fkey")
+
+  @@unique([courseId, menuItemId], map: "CourseItem_courseId_menuItemId_key")
+  @@index([menuItemId], map: "CourseItem_menuItemId_fkey")
+}
+
+model inventorycategory {
+  id            String          @id
+  name          String
+  description   String?
+  inventoryitem inventoryitem[]
+}
+
+model inventoryitem {
+  id                   String                 @id
+  name                 String
+  description          String?
+  unit                 String
+  quantityInStock      Decimal                @db.Decimal(10, 2)
+  alertThreshold       Decimal                @db.Decimal(10, 2)
+  costPerUnit          Decimal                @db.Decimal(10, 2)
+  createdAt            DateTime               @default(now())
+  updatedAt            DateTime
+  categoryId           String
+  inventorycategory    inventorycategory      @relation(fields: [categoryId], references: [id], map: "InventoryItem_categoryId_fkey")
+  inventorytransaction inventorytransaction[]
+  menuitemingredient   menuitemingredient[]
+
+  @@index([categoryId], map: "InventoryItem_categoryId_fkey")
+}
+
+model inventorytransaction {
+  id              String                    @id
+  type            inventorytransaction_type
+  quantity        Decimal                   @db.Decimal(10, 2)
+  notes           String?
+  createdAt       DateTime                  @default(now())
+  inventoryItemId String
+  inventoryitem   inventoryitem             @relation(fields: [inventoryItemId], references: [id], map: "InventoryTransaction_inventoryItemId_fkey")
+
+  @@index([inventoryItemId], map: "InventoryTransaction_inventoryItemId_fkey")
+}
+
+model menucategory {
+  id           String     @id
+  name         String
+  description  String?
+  displayOrder Int
+  active       Boolean    @default(true)
+  menuitem     menuitem[]
+}
+
+model menuitem {
+  id                 String               @id
+  name               String
+  description        String?
+  price              Decimal              @db.Decimal(10, 2)
+  imageUrl           String?
+  active             Boolean              @default(true)
+  createdAt          DateTime             @default(now())
+  updatedAt          DateTime
+  categoryId         String
+  courseitem         courseitem[]
+  menucategory       menucategory         @relation(fields: [categoryId], references: [id], map: "MenuItem_categoryId_fkey")
+  menuitemingredient menuitemingredient[]
+  orderitem          orderitem[]
+
+  @@index([categoryId], map: "MenuItem_categoryId_fkey")
+}
+
+model menuitemingredient {
+  id               String        @id
+  quantityRequired Decimal       @db.Decimal(10, 2)
+  menuItemId       String
+  inventoryItemId  String
+  inventoryitem    inventoryitem @relation(fields: [inventoryItemId], references: [id], map: "MenuItemIngredient_inventoryItemId_fkey")
+  menuitem         menuitem      @relation(fields: [menuItemId], references: [id], onDelete: Cascade, map: "MenuItemIngredient_menuItemId_fkey")
+
+  @@unique([menuItemId, inventoryItemId], map: "MenuItemIngredient_menuItemId_inventoryItemId_key")
+  @@index([inventoryItemId], map: "MenuItemIngredient_inventoryItemId_fkey")
+}
+
+model order {
+  id          String       @id
+  orderNumber String       @unique(map: "Order_orderNumber_key")
+  status      order_status @default(PENDING)
+  notes       String?
+  hasCourse   Boolean      @default(false)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime
+  userId      String
+  seatId      String
+  courseId    String?
+  course      course?      @relation(fields: [courseId], references: [id], map: "Order_courseId_fkey")
+  seat        seat         @relation(fields: [seatId], references: [id], map: "Order_seatId_fkey")
+  user        user         @relation(fields: [userId], references: [id], map: "Order_userId_fkey")
+  orderitem   orderitem[]
+  payment     payment?
+
+  @@index([courseId], map: "Order_courseId_fkey")
+  @@index([seatId], map: "Order_seatId_fkey")
+  @@index([userId], map: "Order_userId_fkey")
+}
+
+model orderitem {
+  id         String           @id
+  quantity   Int
+  price      Decimal          @db.Decimal(10, 2)
+  notes      String?
+  status     orderitem_status @default(PENDING)
+  createdAt  DateTime         @default(now())
+  updatedAt  DateTime
+  orderId    String
+  menuItemId String
+  menuitem   menuitem         @relation(fields: [menuItemId], references: [id], map: "OrderItem_menuItemId_fkey")
+  order      order            @relation(fields: [orderId], references: [id], onDelete: Cascade, map: "OrderItem_orderId_fkey")
+
+  @@index([menuItemId], map: "OrderItem_menuItemId_fkey")
+  @@index([orderId], map: "OrderItem_orderId_fkey")
+}
+
+model payment {
+  id             String         @id
+  receiptNumber  String         @unique(map: "Payment_receiptNumber_key")
+  amount         Decimal        @db.Decimal(10, 2)
+  method         payment_method
+  status         payment_status @default(PENDING)
+  transactionRef String?
+  notes          String?
+  createdAt      DateTime       @default(now())
+  updatedAt      DateTime
+  orderId        String         @unique(map: "Payment_orderId_key")
+  userId         String
+  order          order          @relation(fields: [orderId], references: [id], map: "Payment_orderId_fkey")
+  user           user           @relation(fields: [userId], references: [id], map: "Payment_userId_fkey")
+
+  @@index([userId], map: "Payment_userId_fkey")
+}
+
+model reservation {
+  id              String   @id
+  customerName    String
+  phoneNumber     String
+  partySize       Int
+  reservationTime DateTime
+  notes           String?
+  status          String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+  tableId         String
+  table           table    @relation(fields: [tableId], references: [id], map: "Reservation_tableId_fkey")
+
+  @@index([tableId], map: "Reservation_tableId_fkey")
+}
+
+model seat {
+  id         String      @id  @default(ulid())
+  seatNumber String
+  status     seat_status @default(AVAILABLE)
+  tableId    String
+  order      order[]
+  table      table       @relation(fields: [tableId], references: [id], onDelete: Cascade, map: "Seat_tableId_fkey")
+
+  @@unique([tableId, seatNumber], map: "Seat_tableId_seatNumber_key")
+}
+
+model table {
+  id          String        @id  @default(ulid())
+  tableNumber String        @unique(map: "Table_tableNumber_key")
+  capacity    Int
+  status      table_status  @default(AVAILABLE)
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @default(now())
+  active      Boolean       @default(true)
+  reservation reservation[]
+  seat        seat[]
+}
+
+model user {
+  id          String    @id
+  username    String    @unique(map: "User_username_key")
+  password    String
+  pin         String
+  role        user_role
+  fullName    String
+  email       String?
+  phoneNumber String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime
+  active      Boolean   @default(true)
+  order       order[]
+  payment     payment[]
+}
+
+enum inventorytransaction_type {
+  STOCK_IN
+  STOCK_OUT
+  ADJUSTMENT
+}
+
+enum order_status {
+  PENDING
+  PREPARING
+  SERVED
+  COMPLETED
+  CANCELLED
+}
+
+enum seat_status {
+  AVAILABLE
+  RESERVED
+  OCCUPIED
+}
+
+enum payment_method {
+  CASH
+  CREDIT_CARD
+  DEBIT_CARD
+  QR_CODE
+  MOBILE_BANKING
+}
+
+enum table_status {
+  AVAILABLE
+  RESERVED
+  OCCUPIED
+}
+
+enum orderitem_status {
+  PENDING
+  PREPARING
+  SERVED
+  COMPLETED
+  CANCELLED
+}
+
+enum payment_status {
+  PENDING
+  COMPLETED
+  REFUNDED
+  FAILED
+}
+
+enum user_role {
+  OWNER
+  MANAGER
+  STAFF
+}
