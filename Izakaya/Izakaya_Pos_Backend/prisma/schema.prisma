@@ -8,7 +8,7 @@ datasource db {
 }
 
 model course {
-  id          String       @id
+  id          String       @id  @default(ulid())
   name        String
   description String?
   price       Decimal      @db.Decimal(10, 2)
@@ -20,7 +20,7 @@ model course {
 }
 
 model courseitem {
-  id         String   @id
+  id         String   @id @default(ulid())
   quantity   Int
   courseId   String
   menuItemId String
@@ -85,7 +85,7 @@ model menuitem {
   imageUrl           String?
   active             Boolean              @default(true)
   createdAt          DateTime             @default(now())
-  updatedAt          DateTime
+  updatedAt          DateTime             @updatedAt
   categoryId         String
   courseitem         courseitem[]
   menucategory       menucategory         @relation(fields: [categoryId], references: [id], map: "MenuItem_categoryId_fkey")
