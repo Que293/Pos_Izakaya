@@ -8,39 +8,39 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
-  background-color: #ffffff;
-  color: #2d3748;
+  background-color: #343a40;
+  color: #f8f9fa;
 }
 
 .dashboard {
   display: flex;
   height: 100vh;
-  background-color: #ffffff;
+  background-color: #343a40;
 }
 
 /* Sidebar Styles */
 .sidebar {
   width: 250px;
-  background: linear-gradient(135deg, #414447 0%, #d2dbe4 100%);
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
   padding: 20px;
   display: flex;
   flex-direction: column;
-  border-right: 1px solid #f1eeee;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.05);
+  border-right: 1px solid #6c757d;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.2);
 }
 
 .restaurant-info {
   text-align: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 1px solid #a0aec0;
+  border-bottom: 1px solid #6c757d;
 }
 
 .avatar {
   width: 60px;
   height: 60px;
-  background: linear-gradient(135deg, #6b7280 0%, #4b5563 100%);
-  color: white;
+  background: linear-gradient(135deg, #adb5bd 0%, #868e96 100%);
+  color: #ffffff;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -54,7 +54,7 @@ body {
 .name {
   font-size: 18px;
   font-weight: 600;
-  color: #374151;
+  color: #f8f9fa;
 }
 
 .nav-menu {
@@ -69,12 +69,12 @@ body {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #4a5568;
+  color: #adb5bd;
 }
 
 .nav-item:hover {
-  background-color: #ffffff;
-  color: #2d3748;
+  background-color: #6c757d;
+  color: #ffffff;
   transform: translateX(4px);
 }
 
@@ -90,22 +90,22 @@ body {
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s ease;
-  color: #4a5568;
-  border-top: 1px solid #a0aec0;
+  color: #adb5bd;
+  border-top: 1px solid #6c757d;
   margin-top: 20px;
   padding-top: 20px;
 }
 
 .logout-button:hover {
-  background-color: #fed7d7;
-  color: #e53e3e;
+  background-color: #f8d7da;
+  color: #dc3545;
 }
 
 /* Main Content Styles */
 .main-content {
   flex: 1;
   padding: 30px;
-  background-color: #ffffff;
+  background-color: #495057;
   overflow-y: auto;
 }
 
@@ -115,13 +115,13 @@ body {
   align-items: center;
   margin-bottom: 30px;
   padding-bottom: 20px;
-  border-bottom: 2px solid #e2e8f0;
+  border-bottom: 2px solid #6c757d;
 }
 
 .header-info h1 {
   font-size: 28px;
   font-weight: 700;
-  color: #2d3748;
+  color: #f8f9fa;
   margin-bottom: 8px;
 }
 
@@ -129,7 +129,7 @@ body {
   display: flex;
   gap: 20px;
   font-size: 14px;
-  color: #718096;
+  color: #adb5bd;
 }
 
 .action-buttons {
@@ -152,46 +152,46 @@ body {
 }
 
 .action-button.add {
-  background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
   color: white;
 }
 
 .action-button.add:hover {
-  background: linear-gradient(135deg, #38a169 0%, #2f855a 100%);
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(72, 187, 120, 0.3);
+  box-shadow: 0 4px 8px rgba(108, 117, 125, 0.3);
 }
 
 .action-button.edit {
-  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
-  color: rgb(252, 251, 251);
+  background: linear-gradient(135deg, #868e96 0%, #6c757d 100%);
+  color: white;
 }
 
 .action-button.edit:hover {
-  background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(66, 153, 225, 0.3);
+  box-shadow: 0 4px 8px rgba(134, 142, 150, 0.3);
 }
 
 .action-button.delete {
-  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
-  color: rgb(246, 241, 241);
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
 }
 
 .action-button.delete:hover {
-  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(245, 101, 101, 0.3);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
 }
 
 /* Floor Layout */
 .floor-layout {
   position: relative;
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  background: linear-gradient(135deg, #343a40 0%, #495057 100%);
   border-radius: 12px;
   padding: 30px;
   min-height: 500px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #6c757d;
 }
 
 .tables-grid {
@@ -202,14 +202,14 @@ body {
 }
 
 .table-item {
-  background: rgb(241, 241, 241);
-  border: 2px solid #e2e8f0;
+  background: #6c757d;
+  border: 2px solid #adb5bd;
   border-radius: 12px;
   padding: 15px;
   text-align: center;
   cursor: pointer;
   transition: all 0.3s ease;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
 .table-item:hover {
@@ -218,29 +218,29 @@ body {
 }
 
 .table-item.selected {
-  border-color: #4299e1;
-  box-shadow: 0 0 0 3px rgba(66, 153, 225, 0.1);
+  border-color: #adb5bd;
+  box-shadow: 0 0 0 3px rgba(173, 181, 189, 0.3);
 }
 
 .table-item.available {
-  border-color: #48bb78;
-  background: linear-gradient(135deg, #ffffff 0%, #c6f6d5 100%);
+  border-color: #28a745;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
 }
 
 .table-item.reserved {
-  border-color: #ed8936;
-  background: linear-gradient(135deg, #fffaf0 0%, #fbd38d 100%);
+  border-color: #ffc107;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
 }
 
 .table-item.occupied {
-  border-color: #f56565;
-  background: linear-gradient(135deg, #fff5f5 0%, #fed7d7 100%);
+  border-color: #dc3545;
+  background: linear-gradient(135deg, #6c757d 0%, #5a6268 100%);
 }
 
 .table-code {
   font-weight: bold;
   font-size: 16px;
-  color: #2d3748;
+  color: #f8f9fa;
   margin-bottom: 8px;
 }
 
@@ -264,20 +264,20 @@ body {
 .seat-icon {
   width: 12px;
   height: 12px;
-  background-color: #a0aec0;
+  background-color: #adb5bd;
   border-radius: 50%;
 }
 
 .table-icon {
   width: 40px;
   height: 25px;
-  background-color: #4a5568;
+  background-color: #adb5bd;
   border-radius: 4px;
 }
 
 .table-capacity {
   font-size: 12px;
-  color: #718096;
+  color: #adb5bd;
   margin-bottom: 8px;
 }
 
@@ -291,17 +291,17 @@ body {
 }
 
 .table-item.available .table-status-badge {
-  background-color: #48bb78;
+  background-color: #28a745;
   color: white;
 }
 
 .table-item.reserved .table-status-badge {
-  background-color: #ed8936;
-  color: rgb(255, 255, 255);
+  background-color: #ffc107;
+  color: #212529;
 }
 
 .table-item.occupied .table-status-badge {
-  background-color: #f56565;
+  background-color: #dc3545;
   color: white;
 }
 
@@ -313,8 +313,8 @@ body {
 }
 
 .decoration {
-  background: linear-gradient(135deg, #e2e8f0 0%, #cbd5e0 100%);
-  border: 1px solid #a0aec0;
+  background: linear-gradient(135deg, #e9ecef 0%, #ced4da 100%);
+  border: 1px solid #adb5bd;
   border-radius: 8px;
   padding: 20px;
   text-align: center;
@@ -323,7 +323,7 @@ body {
 
 .decoration-placeholder {
   font-size: 14px;
-  color: #4a5568;
+  color: #6c757d;
   font-weight: 500;
 }
 
@@ -342,19 +342,19 @@ body {
 }
 
 .modal {
-  background: rgb(255, 255, 255);
+  background: #ffffff;
   border-radius: 12px;
   padding: 30px;
   min-width: 400px;
   max-width: 500px;
   box-shadow: 0 10px 40px rgba(0, 0, 0, 0.2);
-  border: 1px solid #ffffff;
+  border: 1px solid #dee2e6;
 }
 
 .modal h2 {
   font-size: 24px;
   font-weight: 700;
-  color: #2d3748;
+  color: #495057;
   margin-bottom: 20px;
   text-align: center;
 }
@@ -367,38 +367,38 @@ body {
   display: block;
   margin-bottom: 8px;
   font-weight: 600;
-  color: #4a5568;
+  color: #6c757d;
 }
 
 .form-group input,
 .form-group select {
   width: 100%;
   padding: 12px;
-  border: 2px solid #e2e8f0;
+  border: 2px solid #dee2e6;
   border-radius: 8px;
   font-size: 14px;
   transition: border-color 0.2s ease;
-  background-color: #f7fafc;
+  background-color: #f8f9fa;
 }
 
 .form-group input:focus,
 .form-group select:focus {
   outline: none;
-  border-color: #4299e1;
+  border-color: #6c757d;
   background-color: white;
 }
 
 .table-detail {
-  background: linear-gradient(135deg, #f7fafc 0%, #edf2f7 100%);
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
   padding: 20px;
   border-radius: 8px;
   margin-bottom: 20px;
-  border: 1px solid #e2e8f0;
+  border: 1px solid #dee2e6;
 }
 
 .table-detail p {
   margin-bottom: 8px;
-  color: #4a5568;
+  color: #6c757d;
 }
 
 .status-text {
@@ -426,38 +426,38 @@ body {
 }
 
 .status-button.free {
-  background-color: #f0fff4;
-  color: #38a169;
-  border-color: #68d391;
+  background-color: #d4edda;
+  color: #155724;
+  border-color: #28a745;
 }
 
 .status-button.free.active,
 .status-button.free:hover {
-  background-color: #48bb78;
-  color: rgb(253, 252, 252);
+  background-color: #28a745;
+  color: white;
 }
 
 .status-button.reserve {
-  background-color: #fffaf0;
-  color: #d69e2e;
-  border-color: #fbd38d;
+  background-color: #fff3cd;
+  color: #856404;
+  border-color: #ffc107;
 }
 
 .status-button.reserve.active,
 .status-button.reserve:hover {
-  background-color: #ed8936;
-  color: white;
+  background-color: #ffc107;
+  color: #212529;
 }
 
 .status-button.use {
-  background-color: #fff5f5;
-  color: #e53e3e;
-  border-color: #feb2b2;
+  background-color: #f8d7da;
+  color: #721c24;
+  border-color: #dc3545;
 }
 
 .status-button.use.active,
 .status-button.use:hover {
-  background-color: #f56565;
+  background-color: #dc3545;
   color: white;
 }
 
@@ -480,31 +480,31 @@ body {
 }
 
 .cancel-button {
-  background-color: #e2e8f0;
-  color: #4a5568;
+  background-color: #e9ecef;
+  color: #6c757d;
 }
 
 .cancel-button:hover {
-  background-color: #cbd5e0;
+  background-color: #ced4da;
 }
 
 .confirm-button {
-  background: linear-gradient(135deg, #4299e1 0%, #3182ce 100%);
+  background: linear-gradient(135deg, #6c757d 0%, #495057 100%);
   color: white;
 }
 
 .confirm-button:hover {
-  background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+  background: linear-gradient(135deg, #495057 0%, #343a40 100%);
   transform: translateY(-1px);
 }
 
 .delete-button {
-  background: linear-gradient(135deg, #f56565 0%, #e53e3e 100%);
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
   color: white;
 }
 
 .delete-button:hover {
-  background: linear-gradient(135deg, #e53e3e 0%, #c53030 100%);
+  background: linear-gradient(135deg, #c82333 0%, #a71e2a 100%);
   transform: translateY(-1px);
 }
 
