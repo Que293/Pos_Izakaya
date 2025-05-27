@@ -8,7 +8,7 @@ datasource db {
 }
 
 model course {
-  id          String       @id  @default(ulid())
+  id          String       @id @default(ulid())
   name        String
   description String?
   price       Decimal      @db.Decimal(10, 2)
@@ -32,14 +32,14 @@ model courseitem {
 }
 
 model inventorycategory {
-  id            String          @id
+  id            String          @id @default(ulid())
   name          String
   description   String?
   inventoryitem inventoryitem[]
 }
 
 model inventoryitem {
-  id                   String                 @id
+  id                   String                 @id @default(ulid())
   name                 String
   description          String?
   unit                 String
@@ -47,7 +47,7 @@ model inventoryitem {
   alertThreshold       Decimal                @db.Decimal(10, 2)
   costPerUnit          Decimal                @db.Decimal(10, 2)
   createdAt            DateTime               @default(now())
-  updatedAt            DateTime
+  updatedAt            DateTime               @updatedAt
   categoryId           String
   inventorycategory    inventorycategory      @relation(fields: [categoryId], references: [id], map: "InventoryItem_categoryId_fkey")
   inventorytransaction inventorytransaction[]
@@ -57,7 +57,7 @@ model inventoryitem {
 }
 
 model inventorytransaction {
-  id              String                    @id
+  id              String                    @id @default(ulid())
   type            inventorytransaction_type
   quantity        Decimal                   @db.Decimal(10, 2)
   notes           String?
@@ -69,7 +69,7 @@ model inventorytransaction {
 }
 
 model menucategory {
-  id           String     @id
+  id           String     @id @default(ulid())
   name         String
   description  String?
   displayOrder Int
@@ -78,7 +78,7 @@ model menucategory {
 }
 
 model menuitem {
-  id                 String               @id
+  id                 String               @id @default(ulid())
   name               String
   description        String?
   price              Decimal              @db.Decimal(10, 2)
@@ -96,7 +96,7 @@ model menuitem {
 }
 
 model menuitemingredient {
-  id               String        @id
+  id               String        @id @default(ulid())
   quantityRequired Decimal       @db.Decimal(10, 2)
   menuItemId       String
   inventoryItemId  String
@@ -108,7 +108,7 @@ model menuitemingredient {
 }
 
 model order {
-  id          String       @id
+  id          String       @id @default(ulid())
   orderNumber String       @unique(map: "Order_orderNumber_key")
   status      order_status @default(PENDING)
   notes       String?
@@ -130,7 +130,7 @@ model order {
 }
 
 model orderitem {
-  id         String           @id
+  id         String           @id @default(ulid())
   quantity   Int
   price      Decimal          @db.Decimal(10, 2)
   notes      String?
@@ -147,7 +147,7 @@ model orderitem {
 }
 
 model payment {
-  id             String         @id
+  id             String         @id @default(ulid())
   receiptNumber  String         @unique(map: "Payment_receiptNumber_key")
   amount         Decimal        @db.Decimal(10, 2)
   method         payment_method
@@ -155,7 +155,7 @@ model payment {
   transactionRef String?
   notes          String?
   createdAt      DateTime       @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime       @updatedAt
   orderId        String         @unique(map: "Payment_orderId_key")
   userId         String
   order          order          @relation(fields: [orderId], references: [id], map: "Payment_orderId_fkey")
@@ -181,7 +181,7 @@ model reservation {
 }
 
 model seat {
-  id         String      @id  @default(ulid())
+  id         String      @id @default(ulid())
   seatNumber String
   status     seat_status @default(AVAILABLE)
   tableId    String
@@ -192,7 +192,7 @@ model seat {
 }
 
 model table {
-  id          String        @id  @default(ulid())
+  id          String        @id @default(ulid())
   tableNumber String        @unique(map: "Table_tableNumber_key")
   capacity    Int
   status      table_status  @default(AVAILABLE)
