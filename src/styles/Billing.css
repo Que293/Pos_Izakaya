@@ -1,0 +1,164 @@
+.billing {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 30px 20px;
+  animation: fadeIn 0.5s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.billing h1 {
+  text-align: center;
+  margin-bottom: 30px;
+  color: #2c3e50;
+  font-weight: 700;
+}
+
+.bill-container {
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.bill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 20px;
+  border-bottom: 1px solid #eceff1;
+}
+
+.bill-header h2 {
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.bill-total {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #2c3e50;
+}
+
+.bill-items {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.seat-bill {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+.seat-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #eceff1;
+}
+
+.seat-header h3 {
+  margin: 0;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.seat-total {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.bill-item {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.extra-item {
+  color: #607d8b;
+  font-size: 0.95rem;
+}
+
+.item-name {
+  flex: 1;
+}
+
+.item-price {
+  font-weight: 500;
+}
+
+.payment-options {
+  background-color: white;
+  border-radius: 16px;
+  padding: 30px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+  margin-bottom: 30px;
+}
+
+.payment-options h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #2c3e50;
+  font-weight: 600;
+  text-align: center;
+}
+
+.payment-methods {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+.payment-method {
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.payment-method:hover {
+  background-color: #e3f2fd;
+  transform: translateY(-5px);
+}
+
+.payment-method h3 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #2c3e50;
+  font-weight: 600;
+}
+
+.payment-method p {
+  color: #607d8b;
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.billing-actions {
+  display: flex;
+  justify-content: center;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .payment-methods {
+    grid-template-columns: 1fr;
+  }
+  
+  .billing-actions button {
+    width: 100%;
+  }
+}
+
