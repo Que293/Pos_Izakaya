@@ -14,7 +14,7 @@ model course {
   price       Decimal      @db.Decimal(10, 2)
   isActive    Boolean      @default(true)
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime  
   courseitem  courseitem[]
   order       order[]
 }
@@ -114,7 +114,7 @@ model order {
   notes       String?
   hasCourse   Boolean      @default(false)
   createdAt   DateTime     @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime     @updatedAt
   userId      String
   seatId      String
   courseId    String?
@@ -136,7 +136,7 @@ model orderitem {
   notes      String?
   status     orderitem_status @default(PENDING)
   createdAt  DateTime         @default(now())
-  updatedAt  DateTime
+  updatedAt  DateTime         @updatedAt
   orderId    String
   menuItemId String
   menuitem   menuitem         @relation(fields: [menuItemId], references: [id], map: "OrderItem_menuItemId_fkey")
@@ -197,7 +197,7 @@ model table {
   capacity    Int
   status      table_status  @default(AVAILABLE)
   createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
   active      Boolean       @default(true)
   reservation reservation[]
   seat        seat[]
@@ -213,7 +213,7 @@ model user {
   email       String?
   phoneNumber String?
   createdAt   DateTime  @default(now())
-  updatedAt   DateTime
+  updatedAt   DateTime  @updatedAt
   active      Boolean   @default(true)
   order       order[]
   payment     payment[]
