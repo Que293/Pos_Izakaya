@@ -1,97 +1,125 @@
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/HomePage.css';
 
-function HomePage() {
+const HomePage = () => {
+  const [currentTime, setCurrentTime] = useState(new Date());
   const navigate = useNavigate();
-  const currentDate = new Date().toLocaleDateString('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-  const currentTime = new Date().toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentTime(new Date());
+    }, 1000);
+
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatDate = (date) => {
+    return date.toLocaleDateString('en-GB', { 
+      day: '2-digit', 
+      month: 'short', 
+      year: 'numeric' 
+    });
+  };
+
+  const formatTime = (date) => {
+    return date.toLocaleTimeString('en-GB', { 
+      hour: '2-digit', 
+      minute: '2-digit',
+      hour12: false
+    });
+  };
 
   return (
-    <div className="dashboard">
+    <div className="dashboard-container">
+      <div className="background-overlay"></div>
+      
+      {/* Sidebar */}
       <div className="sidebar">
-        <div className="restaurant-info">
+        <div className="user-profile">
           <div className="avatar">IZ</div>
-          <div className="name">Izakaya</div>
+          <span className="username">Izakaya</span>
         </div>
         
-        <nav className="nav-menu">
+        <nav className="navigation">
           <div className="nav-item active">
-            <span className="nav-icon">🏠</span>
+            <div className="nav-icon">🏠</div>
             <span>Home</span>
           </div>
           <div className="nav-item">
-            <span className="nav-icon">👥</span>
+            <div className="nav-icon">👥</div>
             <span>Manage employees</span>
           </div>
           <div className="nav-item">
-            <span className="nav-icon">🎯</span>
+            <div className="nav-icon">🎯</div>
             <span>promotion</span>
           </div>
           <div className="nav-item">
-            <span className="nav-icon">⚙️</span>
+            <div className="nav-icon">⚙️</div>
             <span>setting</span>
           </div>
         </nav>
         
-        <div className="logout-button">
-          <span className="nav-icon">⏻</span>
+        <div className="logout">
+          <div className="nav-icon">⏻</div>
           <span>Log out</span>
         </div>
       </div>
       
+      {/* Main Content */}
       <div className="main-content">
         <div className="header">
-          <h1>Store management system</h1>
-          <div className="status-bar">
-            <button className="status-button open">Open</button>
-            <div className="date-time">
-              <div className="date">
+          <h1 className="title">Store management system</h1>
+          <div className="header-right">
+            <div className="status-badge">Open</div>
+            <div className="datetime-info">
+              <div className="date-badge">
                 <span className="icon">📅</span>
-                <span>Date: {currentDate}</span>
+                <span>Date: {formatDate(currentTime)}</span>
               </div>
-              <div className="time">
+              <div className="time-badge">
                 <span className="icon">🕙</span>
-                <span>Time: {currentTime}</span>
+                <span>Time: {formatTime(currentTime)}</span>
               </div>
             </div>
           </div>
         </div>
         
-        <div className="dashboard-grid">
-          <div className="dashboard-card" onClick={() => navigate('/tables')}>
-            <div className="card-badge">10</div>
-            <div className="card-icon table-icon">⚖️</div>
+        <div className="cards-grid">
+          <div className="card">
+            <div className="card-badge red">10</div>
+            <div className="card-icon">⚖️</div>
             <div className="card-title">Manage the table</div>
-            <button className="card-button orange">Click</button>
+            <button className="card-button orange" onClick={() => navigate('/tables')}>Click</button>
           </div>
           
-          <div className="dashboard-card">
+          <div className="card">
             <div className="card-badge red">100</div>
-            <div className="card-icon food-icon">🍔</div>
+            <div className="card-icon">🍔</div>
             <div className="card-title">Food list</div>
-            <button className="card-button teal">Click</button>
+            <button className="card-button green">Click</button>
           </div>
           
-          <div className="dashboard-card">
-            <div className="card-icon product-icon">📦</div>
+          <div className="card">
+            <div className="card-icon">📦</div>
             <div className="card-title">Manage products</div>
             <button className="card-button yellow">Click</button>
           </div>
           
-          <div className="dashboard-card">
-            <div className="card-icon report-icon">📊</div>
+          <div className="card">
+            <div className="card-icon">📊</div>
             <div className="card-title">report</div>
-            <button className="card-button dark">Click</button>
+            <button className="card-button purple">Click</button>
           </div>
           
-          <div className="dashboard-card">
-            <div className="card-icon member-icon">👥</div>
+          <div className="card">
+            <div className="card-icon">👥</div>
             <div className="card-title">member</div>
             <button className="card-button red">Click</button>
           </div>
           
-          <div className="dashboard-card">
-            <div className="card-icon setting-icon">⚙️</div>
+          <div className="card">
+            <div className="card-icon">⚙️</div>
             <div className="card-title">setting</div>
             <button className="card-button blue">Click</button>
           </div>
@@ -99,8 +127,6 @@ function HomePage() {
       </div>
     </div>
   );
-}
+};
 
 export default HomePage;
-
-

@@ -79,11 +79,11 @@ function TableManagement() {
           </div>
           <div className="nav-item">
             <span className="nav-icon">🎯</span>
-            <span>promotion</span>
+            <span>Promotion</span>
           </div>
           <div className="nav-item">
             <span className="nav-icon">⚙️</span>
-            <span>setting</span>
+            <span>Setting</span>
           </div>
         </nav>
         
@@ -95,11 +95,17 @@ function TableManagement() {
       
       <div className="main-content">
         <div className="header">
-          <h1>Manage the table</h1>
+          <div className="header-info">
+            <h1>Manage the table</h1>
+            <div className="date-time">
+              <span className="date">📅 Date: 27 May 2025</span>
+              <span className="time">🕐 Time: 15:08</span>
+            </div>
+          </div>
           <div className="action-buttons">
             <button className="action-button add" onClick={() => setIsAddModalOpen(true)}>
               <span className="icon">+</span>
-              <span>add</span>
+              <span>Add</span>
             </button>
             <button 
               className="action-button edit" 
@@ -119,7 +125,7 @@ function TableManagement() {
               }}
             >
               <span className="icon">🗑️</span>
-              <span>delete</span>
+              <span>Delete</span>
             </button>
           </div>
         </div>
@@ -132,7 +138,7 @@ function TableManagement() {
                 className={`table-item ${table.status} ${selectedTable?.id === table.id ? 'selected' : ''}`}
                 onClick={() => handleTableClick(table)}
               >
-                <div className="table-code">A01</div>
+                <div className="table-code">A{String(table.id).padStart(2, '0')}</div>
                 <div className="table-visual">
                   <div className="table-seats">
                     <div className="seat left-seats">
@@ -156,13 +162,13 @@ function TableManagement() {
           
           <div className="restaurant-decorations">
             <div className="decoration reception">
-              <img src="/src/assets/reception.png" alt="Reception" />
+              <div className="decoration-placeholder">Reception</div>
             </div>
             <div className="decoration bamboo-wall">
-              <img src="/src/assets/bamboo.png" alt="Bamboo" />
+              <div className="decoration-placeholder">Bamboo Wall</div>
             </div>
             <div className="decoration kitchen">
-              <img src="/src/assets/kitchen.png" alt="Kitchen" />
+              <div className="decoration-placeholder">Kitchen</div>
             </div>
           </div>
         </div>
@@ -267,19 +273,19 @@ function TableManagement() {
                 className={`status-button free ${selectedTable.status === 'available' ? 'active' : ''}`}
                 onClick={() => handleStatusChange('available')}
               >
-                free
+                Free
               </button>
               <button 
                 className={`status-button reserve ${selectedTable.status === 'reserved' ? 'active' : ''}`}
                 onClick={() => handleStatusChange('reserved')}
               >
-                reserve
+                Reserve
               </button>
               <button 
                 className={`status-button use ${selectedTable.status === 'occupied' ? 'active' : ''}`}
                 onClick={() => handleStatusChange('occupied')}
               >
-                use
+                Use
               </button>
             </div>
             <div className="modal-actions">
@@ -296,7 +302,3 @@ function TableManagement() {
 }
 
 export default TableManagement;
-
-
-
-
