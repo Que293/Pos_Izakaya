@@ -29,7 +29,7 @@
   width: 200px;
   background: rgba(0, 0, 0, 0.7);
   backdrop-filter: blur(10px);
-  color: white;
+  color: rgb(255, 255, 255);
   padding: 20px;
   display: flex;
   flex-direction: column;
@@ -57,7 +57,7 @@
   justify-content: center;
   font-weight: bold;
   font-size: 14px;
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .username {
@@ -129,7 +129,7 @@
 }
 
 .title {
-  color: white;
+  color: rgb(255, 255, 255);
   font-size: 28px;
   font-weight: 600;
   text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
@@ -143,7 +143,7 @@
 
 .status-badge {
   background: linear-gradient(45deg, #00c851, #007E33);
-  color: white;
+  color: rgb(255, 255, 255);
   padding: 8px 20px;
   border-radius: 20px;
   font-weight: 600;
@@ -159,7 +159,7 @@
 .date-badge, .time-badge {
   background: rgba(255, 255, 255, 0.2);
   backdrop-filter: blur(10px);
-  color: white;
+  color: rgb(255, 255, 255);
   padding: 8px 16px;
   border-radius: 12px;
   display: flex;
@@ -220,7 +220,7 @@
   top: 15px;
   right: 15px;
   background: #ff4757;
-  color: white;
+  color: rgb(255, 255, 255);
   border-radius: 50%;
   width: 30px;
   height: 30px;
@@ -243,7 +243,7 @@
 }
 
 .card-title {
-  color: white;
+  color: rgb(251, 251, 251);
   font-size: 18px;
   font-weight: 600;
   margin-bottom: 20px;
@@ -269,12 +269,12 @@
 
 .card-button.orange {
   background: linear-gradient(45deg, #ff9500, #ffb84d);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .card-button.green {
   background: linear-gradient(45deg, #00c851, #00ff7f);
-  color: white;
+  color: rgb(255, 255, 255);
 }
 
 .card-button.yellow {
