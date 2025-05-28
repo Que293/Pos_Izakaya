@@ -97,7 +97,7 @@ const HomePage = () => {
             <div className="card-badge red">100</div>
             <div className="card-icon">🍔</div>
             <div className="card-title">Food list</div>
-            <button className="card-button green">Click</button>
+            <button className="card-button green" onClick={() => navigate('/foods')}>Click</button>
           </div>
           
           <div className="card">
@@ -130,3 +130,4 @@ const HomePage = () => {
 };
 
 export default HomePage;
+
