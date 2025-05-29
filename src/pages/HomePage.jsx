@@ -7,12 +7,16 @@ const HomePage = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Redirect to login if not admin
+    if (localStorage.getItem('isAdmin') !== 'true') {
+      navigate('/login');
+    }
     const timer = setInterval(() => {
       setCurrentTime(new Date());
     }, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [navigate]);
 
   const formatDate = (date) => {
     return date.toLocaleDateString('en-GB', { 
@@ -28,6 +32,17 @@ const HomePage = () => {
       minute: '2-digit',
       hour12: false
     });
+  };
+
+  const ADMIN_PIN = '1234'; // Example admin PIN, this should be securely stored
+
+  const handleAdminAccess = (pin) => {
+    if (pin === ADMIN_PIN) {
+      localStorage.setItem('isAdmin', 'true');
+      navigate('/');
+    } else {
+      alert('Invalid admin PIN');
+    }
   };
 
   return (
@@ -60,10 +75,13 @@ const HomePage = () => {
           </div>
         </nav>
         
-        <div className="logout">
-          <div className="nav-icon">⏻</div>
-          <span>Log out</span>
-        </div>
+        <div className="logout" onClick={() => {
+  localStorage.removeItem('isAdmin');
+  navigate('/login');
+}}>
+  <div className="nav-icon">⏻</div>
+  <span>Log out</span>
+</div>
       </div>
       
       {/* Main Content */}
