@@ -11,8 +11,8 @@ const { getAllMenuCategories,
 router.get('/menucategories', getAllMenuCategories)
 router.get('/menucategories/:id', getMenuCategoryByid)
 router.post('/menucategories', addMenuCategory)
-router.put('/menucategories/:id', updateMenuCategory)
 router.put('/menucategories/order', updateCategoriesOrder)
+router.put('/menucategories/:id', updateMenuCategory)
 router.delete('/menucategories/:id', deleteMenuCategory)
 
 module.exports = router;

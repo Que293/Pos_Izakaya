@@ -216,11 +216,11 @@ exports.updateMenuCategory = async (req, res) => {
 
 exports.updateCategoriesOrder = async (req, res) => {
     try {
-        console.log('Request body:', req.body);
-
+        
         const { categories } = req.body;
 
         if (!categories || !Array.isArray(categories)) {
+            console.log("Invalid input");
             return res.status(400).json({
                 success: false,
                 message: 'ข้อมูลลำดับหมวดหมู่ไม่ถูกต้อง'
@@ -245,13 +245,11 @@ exports.updateCategoriesOrder = async (req, res) => {
             }
         });
 
-        console.log('Existing categories:', existingCategories);
+
 
         const existingIds = existingCategories.map(cat => cat.id);
         const missingIds = categoryIds.filter(id => !existingIds.includes(id));
-
-        console.log('Existing IDs:', existingIds);
-        console.log('Missing IDs:', missingIds);
+;
 
         if (missingIds.length > 0) {
             return res.status(404).json({
