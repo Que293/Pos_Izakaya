@@ -414,12 +414,9 @@ exports.deleteReservation = async (req, res) => {
     try {
         const { id } = req.params;
 
-        // ตรวจสอบว่าการจองมีอยู่จริง
         const existingReservation = await prisma.reservation.findUnique({
             where: { id },
-            include: {
-                table: true
-            }
+            include: { table: true }
         });
 
         if (!existingReservation) {
@@ -429,52 +426,50 @@ exports.deleteReservation = async (req, res) => {
             });
         }
 
-        // ตรวจสอบว่าสามารถยกเลิกได้หรือไม่
-        if (existingReservation.status === 'COMPLETED') {
+        if (['COMPLETED', 'CANCELLED'].includes(existingReservation.status)) {
             return res.status(400).json({
                 success: false,
-                message: 'ไม่สามารถยกเลิกการจองที่เสร็จสิ้นแล้ว'
+                message: 'ไม่สามารถยกเลิกการจองที่เสร็จสิ้นหรือถูกยกเลิกแล้ว'
             });
         }
 
-        // อัปเดตสถานะเป็น CANCELLED แทนการลบจริง
-        const cancelledReservation = await prisma.reservation.update({
-            where: { id },
-            data: {
-                status: 'CANCELLED'
-            },
-            include: {
-                table: {
-                    select: {
-                        id: true,
-                        tableNumber: true,
-                        capacity: true,
-                        status: true
+        const result = await prisma.$transaction(async (tx) => {
+            const cancelledReservation = await tx.reservation.update({
+                where: { id },
+                data: { status: 'CANCELLED' },
+                include: {
+                    table: {
+                        select: {
+                            id: true,
+                            tableNumber: true,
+                            capacity: true,
+                            status: true
+                        }
                     }
                 }
-            }
-        });
-
-        // ตรวจสอบว่ามีการจองอื่นที่ยัง ACTIVE สำหรับโต๊ะนี้อยู่ไหม
-        const activeReservation = await prisma.reservation.findFirst({
-            where: {
-                tableId: cancelledReservation.table.id,
-                status: { in: ['PENDING', 'CONFIRMED'] }
-            }
-        });
-
-        // ถ้าไม่มี → เปลี่ยนสถานะโต๊ะเป็น AVAILABLE
-        if (!activeReservation) {
-            await prisma.table.update({
-                where: { id: cancelledReservation.table.id },
-                data: { status: 'AVAILABLE' }
             });
-        }
+
+            const activeReservation = await tx.reservation.findFirst({
+                where: {
+                    tableId: cancelledReservation.table.id,
+                    status: { in: ['PENDING', 'CONFIRMED'] }
+                }
+            });
+
+            if (!activeReservation) {
+                await tx.table.update({
+                    where: { id: cancelledReservation.table.id },
+                    data: { status: 'AVAILABLE' }
+                });
+            }
+
+            return cancelledReservation;
+        });
 
         res.status(200).json({
             success: true,
             message: 'ยกเลิกการจองเรียบร้อยแล้ว',
-            data: cancelledReservation
+            data: result
         });
 
     } catch (error) {
@@ -486,6 +481,8 @@ exports.deleteReservation = async (req, res) => {
         });
     }
 };
+
+
 
 
 exports.getReservationByDate = async (req, res) => {

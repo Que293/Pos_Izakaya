@@ -68,6 +68,7 @@ exports.getAllOrders = async (req, res) => {
             const totalAmount = itemsTotal + courseTotal;
 
             return {
+                id: order.id,
                 orderNumber: order.orderNumber,
                 status: order.status,
                 notes: order.notes,
@@ -172,6 +173,7 @@ exports.getOrderById = async (req, res) => {
 
         // จัดรูปแบบข้อมูลให้ไม่มี id และ updatedAt
         const cleanedOrder = {
+            id: order.id,
             orderNumber: order.orderNumber,
             status: order.status,
             notes: order.notes,
@@ -379,7 +381,6 @@ exports.updateOrder = async (req, res) => {
         const { id } = req.params;
         const { notes, orderItems = [] } = req.body;
 
-        // ตรวจสอบว่าออร์เดอร์มีอยู่จริง
         const existingOrder = await prisma.order.findUnique({
             where: { id },
             include: { orderitem: true }
@@ -392,7 +393,6 @@ exports.updateOrder = async (req, res) => {
             });
         }
 
-        // ตรวจสอบสถานะ - ไม่สามารถแก้ไขออร์เดอร์ที่เสร็จสิ้นแล้ว
         if (['COMPLETED', 'CANCELLED'].includes(existingOrder.status)) {
             return res.status(400).json({
                 success: false,
@@ -400,9 +400,8 @@ exports.updateOrder = async (req, res) => {
             });
         }
 
-        const result = await prisma.$transaction(async (tx) => {
-            // อัปเดตข้อมูลหลักของออร์เดอร์
-            const updatedOrder = await tx.order.update({
+        await prisma.$transaction(async (tx) => {
+            await tx.order.update({
                 where: { id },
                 data: {
                     notes,
@@ -410,9 +409,7 @@ exports.updateOrder = async (req, res) => {
                 }
             });
 
-            // หากมีการส่ง orderItems มาให้อัปเดต
             if (orderItems.length > 0) {
-                // ลบ order items เก่า (เฉพาะที่ยังไม่ได้เริ่มเตรียม)
                 await tx.orderitem.deleteMany({
                     where: {
                         orderId: id,
@@ -420,7 +417,6 @@ exports.updateOrder = async (req, res) => {
                     }
                 });
 
-                // ตรวจสอบ menu items
                 const menuItemIds = orderItems.map(item => item.menuItemId);
                 const menuItems = await tx.menuitem.findMany({
                     where: {
@@ -433,7 +429,6 @@ exports.updateOrder = async (req, res) => {
                     throw new Error('พบรายการอาหารที่ไม่ถูกต้องหรือไม่มีในระบบ');
                 }
 
-                // สร้าง order items ใหม่
                 const orderItemsData = orderItems.map(item => {
                     const menuItem = menuItems.find(mi => mi.id === item.menuItemId);
                     return {
@@ -446,36 +441,25 @@ exports.updateOrder = async (req, res) => {
                     };
                 });
 
-                await tx.orderitem.createMany({
-                    data: orderItemsData
-                });
+                await tx.orderitem.createMany({ data: orderItemsData });
             }
-
-            return updatedOrder;
         });
 
-        // ดึงข้อมูลออร์เดอร์ที่อัปเดตแล้ว
-        const updatedOrder = await prisma.order.findUnique({
+
+        const minimalOrder = await prisma.order.findUnique({
             where: { id },
-            include: {
-                user: {
-                    select: { fullName: true }
-                },
-                seat: {
-                    include: {
-                        table: {
-                            select: { tableNumber: true }
-                        }
-                    }
-                },
-                course: true,
+            select: {
+                id: true,
+                orderNumber: true,
+                status: true,
+                notes: true,
                 orderitem: {
-                    include: {
+                    select: {
+                        quantity: true,
+                        price: true,
                         menuitem: {
                             select: {
-                                name: true,
-                                price: true,
-                                imageUrl: true
+                                name: true
                             }
                         }
                     }
@@ -483,12 +467,10 @@ exports.updateOrder = async (req, res) => {
             }
         });
 
-
-        const { id: _, updatedAt, ...filteredOrder } = updatedOrder;
         res.json({
             success: true,
             message: 'อัปเดตออร์เดอร์สำเร็จ',
-            data: filteredOrder
+            data: minimalOrder
         });
     } catch (error) {
         console.error('Error updating order:', error);
@@ -499,6 +481,7 @@ exports.updateOrder = async (req, res) => {
         });
     }
 };
+
 
 exports.updateOrderStatus = async (req, res) => {
     try {
@@ -670,7 +653,11 @@ exports.getOrdersByTableId = async (req, res) => {
 
         // ตรวจสอบว่าโต๊ะมีอยู่จริง
         const table = await prisma.table.findUnique({
-            where: { id: tableId }
+            where: { id: tableId },
+            select: {
+                id: true,
+                tableNumber: true
+            }
         });
 
         if (!table) {
@@ -695,45 +682,25 @@ exports.getOrdersByTableId = async (req, res) => {
         const orders = await prisma.order.findMany({
             where: whereCondition,
             include: {
-                user: {
-                    select: {
-                        fullName: true,
-                        username: true
-                    }
-                },
                 seat: {
                     select: {
-                        seatNumber: true,
-                        status: true
+                        seatNumber: true
                     }
                 },
                 course: {
                     select: {
-                        name: true,
                         price: true
                     }
                 },
                 orderitem: {
-                    include: {
+                    select: {
+                        quantity: true,
+                        price: true,
                         menuitem: {
                             select: {
-                                name: true,
-                                price: true,
-                                imageUrl: true,
-                                menucategory: {
-                                    select: {
-                                        name: true
-                                    }
-                                }
+                                name: true
                             }
                         }
-                    }
-                },
-                payment: {
-                    select: {
-                        amount: true,
-                        method: true,
-                        status: true
                     }
                 }
             },
@@ -747,27 +714,29 @@ exports.getOrdersByTableId = async (req, res) => {
             const seatNumber = order.seat.seatNumber;
             if (!acc[seatNumber]) {
                 acc[seatNumber] = {
-                    seat: order.seat,
+                    seatNumber,
                     orders: []
                 };
             }
 
-            // คำนวณยอดรวมของออร์เดอร์
             const itemsTotal = order.orderitem.reduce((sum, item) =>
                 sum + Number(item.price) * Number(item.quantity), 0
             );
-
             const courseTotal = order.course ? Number(order.course.price) : 0;
             const totalAmount = itemsTotal + courseTotal;
 
-            // ตัด id, updatedAt ออกจากออร์เดอร์ก่อน push เข้า
-            const { id, updatedAt, ...restOrder } = order;
-
             acc[seatNumber].orders.push({
-                ...restOrder,
+                orderNumber: order.orderNumber,
+                status: order.status,
+                notes: order.notes || null,
                 itemsTotal: itemsTotal.toString(),
                 courseTotal: courseTotal.toString(),
-                totalAmount: totalAmount.toString()
+                totalAmount: totalAmount.toString(),
+                orderitem: order.orderitem.map(item => ({
+                    menuName: item.menuitem.name,
+                    quantity: item.quantity,
+                    price: item.price
+                }))
             });
 
             return acc;
@@ -792,6 +761,8 @@ exports.getOrdersByTableId = async (req, res) => {
 
 
 
+
+
 exports.getOrdersBySeatId = async (req, res) => {
     try {
         const { seatId } = req.params;
@@ -800,7 +771,9 @@ exports.getOrdersBySeatId = async (req, res) => {
         // ตรวจสอบว่าที่นั่งมีอยู่จริง
         const seat = await prisma.seat.findUnique({
             where: { id: seatId },
-            include: {
+            select: {
+                seatNumber: true,
+                status: true,
                 table: {
                     select: {
                         tableNumber: true
@@ -827,37 +800,27 @@ exports.getOrdersBySeatId = async (req, res) => {
         const orders = await prisma.order.findMany({
             where: whereCondition,
             include: {
-                user: {
-                    select: { fullName: true, username: true }
-                },
                 course: {
-                    select: { name: true, description: true, price: true }
+                    select: { name: true, price: true }
                 },
                 orderitem: {
                     select: {
                         quantity: true,
                         price: true,
-                        status: true,
                         menuitem: {
                             select: {
                                 name: true,
-                                price: true,
-                                imageUrl: true,
                                 menucategory: {
                                     select: { name: true }
                                 }
                             }
                         }
                     }
-                },
-                payment: {
-                    select: { amount: true, method: true, status: true }
                 }
             },
             orderBy: { createdAt: 'desc' }
         });
 
-        // จัดรูปแบบและคำนวณยอดรวม
         const ordersWithTotal = orders.map(order => {
             const itemsTotal = order.orderitem.reduce(
                 (sum, item) => sum + Number(item.price) * item.quantity,
@@ -867,27 +830,25 @@ exports.getOrdersBySeatId = async (req, res) => {
             const totalAmount = itemsTotal + courseTotal;
 
             return {
+                id: order.id,
                 orderNumber: order.orderNumber,
                 status: order.status,
                 notes: order.notes,
                 hasCourse: order.hasCourse,
-                user: order.user,
-                course: order.course,
+                course: order.course ? {
+                    name: order.course.name,
+                    price: order.course.price
+                } : null,
                 orderItems: order.orderitem.map(item => ({
+                    menuName: item.menuitem.name,
+                    category: item.menuitem.menucategory.name,
                     quantity: item.quantity,
-                    price: item.price,
-                    status: item.status,
-                    menuItem: {
-                        name: item.menuitem.name,
-                        price: item.menuitem.price,
-                        imageUrl: item.menuitem.imageUrl,
-                        category: item.menuitem.menucategory.name
-                    }
+                    price: item.price
                 })),
-                payment: order.payment,
                 itemsTotal,
                 courseTotal,
-                totalAmount
+                totalAmount,
+                createdAt: order.createdAt
             };
         });
 
@@ -903,7 +864,7 @@ exports.getOrdersBySeatId = async (req, res) => {
                 },
                 orders: ordersWithTotal,
                 summary: {
-                    totalOrders: orders.length,
+                    totalOrders: ordersWithTotal.length,
                     grandTotal
                 }
             }
@@ -917,6 +878,8 @@ exports.getOrdersBySeatId = async (req, res) => {
         });
     }
 };
+
+
 
 
 

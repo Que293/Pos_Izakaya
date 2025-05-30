@@ -204,7 +204,7 @@ model table {
 }
 
 model user {
-  id          String    @id
+  id          String    @id @default(ulid())
   username    String    @unique(map: "User_username_key")
   password    String
   pin         String

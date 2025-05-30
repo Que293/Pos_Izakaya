@@ -4,7 +4,7 @@ const morgan = require('morgan');
 
 const cors = require('cors');
 const { readdirSync } = require('fs');
-const reservationStatusUpdater = require('../cron/reservationStatusUpdater');
+// const reservationStatusUpdater = require('../cron/reservationStatusUpdater');
 
 app.use(morgan('dev'));
 app.use(express.json());

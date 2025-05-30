@@ -469,7 +469,7 @@ exports.refreshAllTableCapacity = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: 'รีเฟรชจำนวนที่นั่งของทุกโต๊ะสำเร็จ'
-      
+
     });
 
   } catch (error) {
